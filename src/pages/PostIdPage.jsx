@@ -24,8 +24,8 @@ const PostIdPage = () => {
     },[])
 
     return (
-        <div>
-            <h1> Страница {params.id}-го поста </h1>
+        <div style={{width: '100vw'}}>
+            <h1 style={{textAlign: 'center'}}> Страница {params.id}-го поста </h1>
 
             {
                 isLoading ? <Loader/> : <div> {post.id}. {post.title} </div>
@@ -36,7 +36,7 @@ const PostIdPage = () => {
                     ? <Loader/>
                     : <div>
                         {comments.map((comment) =>
-                            <div style={{marginTop: 15}}>
+                            <div key = {comment.id}style={{marginTop: 15}}>
                                 <h5>{comment.email}</h5>
                                 <div>{comment.body}</div>
                             </div>

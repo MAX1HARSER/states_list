@@ -6,6 +6,7 @@ import AuthPage from "../pages/AuthPage";
 
 export const privateRoutes = [
     {path: '/about', component: <About/>, exact: false},
+    {path: '', component: <Posts/>, exact: true},
     {path: '/posts', component: <Posts/>, exact: true},
     {path: '/posts/:id', component: <PostIdPage/>, exact: true},
     {path: '*', component: <NotFound/>, exact: false},
