@@ -1,4 +1,4 @@
-import React, { useEffect, useState }  from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import PostList from '../components/PostList';
 import MyButton from '../components/UI/button/MyButton';
 import PostForm from '../components/PostForm';
@@ -10,6 +10,8 @@ import Loader from '../components/UI/Loader/Loader';
 import { useFetching } from '../hooks/useFetching';
 import {getPagesArray, getPagesCount} from '../utils/pages'
 import {Pagination} from "../components/UI/pagination/Pagination";
+import {useObserver} from "../hooks/useObserver";
+import MySelect from "../components/UI/select/MySelect";
 
 
 function Posts() {
@@ -19,20 +21,24 @@ function Posts() {
     const [totalPages, setTotalPages] = useState(0)
     const [limit, setlimit] = useState(10);
     const [page, setPage] = useState(1);
-
     const [fetchPosts, isPostsLoading, postError] = useFetching(async () =>{
         const response = await PostService.getAll(limit, page);
-
-        setPosts(response.data)
+        setPosts([...posts, ...response.data])
         const totalCount = response.headers['x-total-count']
         setTotalPages(getPagesCount(totalCount, limit))
     })
-
     const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+    const lastElement = useRef();
+
+
+    useObserver(lastElement, page < totalPages, isPostsLoading, () => {
+        setPage(prevState => prevState + 1)
+    } )
+
 
     useEffect(()=>{
-        fetchPosts()
-    },[page])
+        fetchPosts(limit, page)
+    },[page, limit])
 
     const createPost=(newPost)=>{ //пост из дочернего компонента PostForm
         setPosts([...posts, newPost])
@@ -64,15 +70,31 @@ function Posts() {
                 filter={filter}
                 setFilter={setFilter}
             />
+            <MySelect
+                value={limit}
+                onChange={value => setlimit(value)}
+                defaultValue="Кол-во элементов на странице"
+                options={[
+                    {value: 5, name: '5'},
+                    {value: 10, name: '10'},
+                    {value: 25, name: '25'},
+                    {value: -1, name: 'Показать все посты'},
+                ]}
 
+            />
             {postError &&
                 <h1> TypeError: ${postError}</h1>
             }
-            {isPostsLoading
-                ? <div style={{display:'flex', justifyContent:'center', marginTop: 50}}><Loader/></div>
-                : <PostList remove={RemovePost} posts={sortedAndSearchedPosts} title={"JsonPlaceHolder"}/>
+            <PostList remove={RemovePost} posts={sortedAndSearchedPosts} title={"JsonPlaceHolder"}/>
 
+            <div ref={lastElement} style={{backgroundColor: 'teal', height: '20px'}}></div>
+
+            {isPostsLoading &&
+                <div  style={{display:'flex', justifyContent:'center', marginTop: 50}}><Loader/></div>
             }
+
+
+
             <Pagination
                 changePage={changePage}
                 page={page}

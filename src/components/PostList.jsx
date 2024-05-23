@@ -25,7 +25,7 @@ const PostList = function({posts, title, remove}){
                          timeout={500}
                          classNames="post"
                        >
-                            <PostItem remove={remove} number={index +1 } post={post} />
+                            <PostItem remove={remove} number={index + 1 } post={post} />
                         </CSSTransition>
                     )}
                 </TransitionGroup>

@@ -1,8 +1,6 @@
-import {React, useState} from "react";
+import React, {useState} from "react";
 import MyInput from './UI/input/MyInput'
 import MyButton from './UI/button/MyButton'
-
-
 
 const PostForm = ({create}) => {
     const [post,setPost] = useState({title: '', body: ''})    
@@ -16,8 +14,6 @@ const PostForm = ({create}) => {
         create(newPost)
     
         setPost({title: '', body: ''})
-      
-        
     }
 
     return (
@@ -28,7 +24,7 @@ const PostForm = ({create}) => {
                 onChange={event => setPost({...post, title: event.target.value})}
                 value={post.title}
             />
-        
+
             <MyInput
                 type='text' 
                 placeholder='Текст поста'
@@ -39,6 +35,5 @@ const PostForm = ({create}) => {
         </form>
   );
 }
-
 
 export default PostForm
